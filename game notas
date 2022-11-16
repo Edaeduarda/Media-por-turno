@@ -1,0 +1,66 @@
+//Puxa do do flow as variaveis 
+var FRIO_141_TEMP_ETAN_ENV = flow.get("FRIO_141_TEMP_ETAN_ENV");
+var FRIO_141_TEMP_ETAN_RETORNO = flow.get("FRIO_141_TEMP_ETAN_RETORNO");
+
+var RESFR_142_NIVEL_TQ_AGUA = flow.get("RESFR_142_NIVEL_TQ_AGUA");
+var RESFR_142_TEMP_AGUA_SAIDA_RESF = flow.get("RESFR_142_TEMP_AGUA_SAIDA_RESF");
+
+var NH3_141_ALARME_SENSOR_1 = flow.get("NH3_141_ALARME_SENSOR_1");
+var NH3_141_ALARME_SENSOR_2 = flow.get("NH3_141_ALARME_SENSOR_2");
+var NH3_141_ALARME_SENSOR_3 = flow.get("NH3_141_ALARME_SENSOR_3");
+var NH3_141_ALARME_SENSOR_4 = flow.get("NH3_141_ALARME_SENSOR_4");
+var NH3_141_ALARME_SENSOR_5 = flow.get("NH3_141_ALARME_SENSOR_5");
+var NH3_141_ALARME_SENSOR_6 = flow.get("NH3_141_ALARME_SENSOR_6");
+var NH3_141_ALARME_SENSOR_7 = flow.get("NH3_141_ALARME_SENSOR_7");
+var NH3_141_ALARME_SENSOR_8 = flow.get("NH3_141_ALARME_SENSOR_8");
+
+var AR_121_PRES_AR_TQ_PULMAO = flow.get("AR_121_PRES_AR_TQ_PULMAO");
+
+
+//Inicializa Notas
+var nota_env_frio = 0
+var nota_nh3 = 0
+var nota_utilidades =0
+var nota_ret_frio = 0
+var nota_ar = 0
+var nota_nv_tq_agua =0
+
+//Nota de NH3
+var soma_nh3 = NH3_141_ALARME_SENSOR_1+NH3_141_ALARME_SENSOR_2+NH3_141_ALARME_SENSOR_3+NH3_141_ALARME_SENSOR_4+NH3_141_ALARME_SENSOR_5+NH3_141_ALARME_SENSOR_6+NH3_141_ALARME_SENSOR_7+NH3_141_ALARME_SENSOR_8
+
+if(soma_nh3 ==0) {nota_nh3 = 10}
+if(soma_nh3 >=1) {nota_nh3 = 7}
+if(soma_nh3 >=2) {nota_nh3 = 5}
+if(soma_nh3 >=3) {nota_nh3 = 3}
+if(soma_nh3 >=4) {nota_nh3 = 1}
+if(soma_nh3 >=5) {nota_nh3 = 0}
+
+//Nota de envio de frio 
+if(FRIO_141_TEMP_ETAN_ENV >=-5 && FRIO_141_TEMP_ETAN_ENV <-4 ) {nota_env_frio = 4}
+if(FRIO_141_TEMP_ETAN_ENV >=-2,5 && FRIO_141_TEMP_ETAN_ENV <=-3,5) {nota_env_frio = 10}
+if(FRIO_141_TEMP_ETAN_ENV >=-3,5 && FRIO_141_TEMP_ETAN_ENV <=-4) {nota_env_frio = 8}
+
+
+//Nota de nível do tq de água gelada
+if(RESFR_142_NIVEL_TQ_AGUA <=30  )                               {nota_nv_tq_agua = 0}
+if(RESFR_142_NIVEL_TQ_AGUA >30 && RESFR_142_NIVEL_TQ_AGUA <70)   {nota_nv_tq_agua = 7}
+if(RESFR_142_NIVEL_TQ_AGUA >70 && RESFR_142_NIVEL_TQ_AGUA <95)   {nota_nv_tq_agua = 10}
+if(RESFR_142_NIVEL_TQ_AGUA >=95 && RESFR_142_NIVEL_TQ_AGUA <110) {nota_nv_tq_agua = 4}
+
+//Nota ar comprimido
+if(AR_121_PRES_AR_TQ_PULMAO <5.5  || AR_121_PRES_AR_TQ_PULMAO >6.5)  {nota_ar = 0}
+if(AR_121_PRES_AR_TQ_PULMAO >5.5  && AR_121_PRES_AR_TQ_PULMAO <=6.0) {nota_ar = 10}
+if(AR_121_PRES_AR_TQ_PULMAO >6.0  && AR_121_PRES_AR_TQ_PULMAO <=6.5) {nota_ar = 6}
+
+
+ nota_utilidades =  ( nota_env_frio + nota_nh3 + nota_nv_tq_agua + nota_ar)/4
+
+msg.payload = {
+    nota_utilidades,
+    nota_env_frio,
+    nota_nh3,
+    nota_nv_tq_agua,
+    nota_ar
+}
+
+return msg;
